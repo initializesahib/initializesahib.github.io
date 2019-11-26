@@ -13,6 +13,8 @@
         margin: auto;
       }
       body {
+        -webkit-animation: background 15s cubic-bezier(1,0,0,1) infinite;
+        animation: background 15s cubic-bezier(1,0,0,1) infinite;  
         display: table-cell;
         vertical-align: middle;
         background-color: #2e2e2e;
@@ -22,6 +24,18 @@
       a {
         text-decoration: none;
         color: #338bd5;
+      }
+      @-webkit-keyframes background {
+        0% { background-color: #2e2e2e; }
+        33% { background-color: #2eee2e; }  
+        67% { background-color: #eeeeee; }
+        100% { background-color: #222222; }
+      }
+      @keyframes background {
+        0% { background-color: #2e2e2e; }
+        33% { background-color: #2eee2e; }  
+        67% { background-color: #eeeeee; }
+        100% { background-color: #222222; }
       }
     </style>
     <title>InitializeSahib</title>
