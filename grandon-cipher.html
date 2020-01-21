@@ -1,6 +1,6 @@
 <html lang="en">
   <head>
-    <title>grandon cipher 2.1</title>
+    <title>grandon cipher 2.2</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> 
     <script src="https://kit.fontawesome.com/df4fbc016e.js" crossorigin="anonymous"></script>
     <style>
@@ -13,32 +13,32 @@
       }
       body {
         font-family: 'Roboto', sans-serif;
-        color: #c5c6cb;
-        background-color: #575462;
+        color: #b4b5ba;
+        background-color: #464351;
         display: table-cell;
         vertical-align: middle;
       }
       a {
-        color: #e7e8ed;
+        color: #d6d7dc;
         text-decoration: none;
       }
       a:hover {
-        color: #a3a4a0;
+        color: #029490;
       }
       .myButton {
-	background-color:#c5c6cb;
+	background-color:#b4b5ba;
 	border-radius:3px;
-	border:1px solid #575462;
+	border:1px solid #464351;
 	display:inline-block;
 	cursor:pointer;
-	color:#575462;
+	color:#464351;
 	font-family:'Roboto';
 	font-size:15px;
 	padding:9px 23px;
 	text-decoration:none;
       }
       .myButton:hover {
-	background-color:#eeeeee;
+	background-color:#dddddd;
         color:#000000;
       }
       .myButton:active {
@@ -46,7 +46,7 @@
 	top:1px;
       }   
       input, textarea {
-        border: solid 3px #575462;
+        border: solid 3px #464351;
         font-family: Roboto;
       }
       div {
@@ -55,32 +55,62 @@
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/pbkdf2.js"></script>
     <script>
+      function hexToBase64(str) {
+        return btoa(String.fromCharCode.apply(null,
+          str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
+        );
+      }
+      function base64ToHex(str) {
+        for (var i = 0, bin = atob(str.replace(/[ \r\n]+$/, "")), hex = []; i < bin.length; ++i) {
+          var tmp = bin.charCodeAt(i).toString(16);
+          if (tmp.length === 1) tmp = "0" + tmp;
+          hex[hex.length] = tmp;
+        }
+        return hex.join("");
+      }
       function encryptThatShit() {
-        let key = document.getElementById('key').value
+        let pass = document.getElementById('key').value
         let message = document.getElementById('message').value
-        let encoded = CryptoJS.AES.encrypt(message, key)
-        let sped = encoded
-        document.getElementById('message').value = sped.toString().substring(10)
+        let salt = CryptoJS.lib.WordArray.random(32)
+        let key = CryptoJS.PBKDF2(pass, salt, {keySize: 8, iterations: 1000})
+        let iv = CryptoJS.lib.WordArray.random(16)
+        let encoded = CryptoJS.AES.encrypt(message, key, {iv: iv, padding: CryptoJS.pad.Pkcs7, mode: CryptoJS.mode.CBC})
+        let sped = hexToBase64(salt + iv + base64ToHex(encoded.toString()))
+        document.getElementById('message').value = sped
+        var output = document.querySelector('#message')
+        output.focus()
+        output.select()
+        document.execCommand('copy')
       }
       function decryptThatShit() {
-        let key = document.getElementById('key').value
-        let message = 'U2FsdGVkX1' + document.getElementById('message').value
-        let encoded = CryptoJS.AES.decrypt(message, key)
-        let sped = encoded.toString(CryptoJS.enc.Utf8)
+        let pass = document.getElementById('key').value
+        let message = base64ToHex(document.getElementById('message').value)
+        let salt = CryptoJS.enc.Hex.parse(message.substr(0, 64))
+        let iv = CryptoJS.enc.Hex.parse(message.substr(64, 32))
+        let encoded = hexToBase64(message.substring(96))
+        let key = CryptoJS.PBKDF2(pass, salt, {keySize: 8, iterations: 1000})
+        let decoded = CryptoJS.AES.decrypt(encoded, key, {iv: iv, padding: CryptoJS.pad.Pkcs7, mode: CryptoJS.mode.CBC})
+        let sped = decoded.toString(CryptoJS.enc.Utf8)
         document.getElementById('message').value = sped
+        var output = document.querySelector('#message')
+        output.focus()
+        output.select()
+        document.execCommand('copy')
       }
     </script>
   </head>
   <body>
     <h1>grandon cipher</h1>
-    <h4>version 2.1</h4>
+    <h4>version 2.2</h4>
     <input type="text" placeholder="Key" id="key" name="key"><br>
     <div>
       <textarea contenteditable="true" type="text" placeholder="Input / Output" id="message" name="message"></textarea><br><br>
     </div>
     <button class="myButton" onclick="encryptThatShit();"><i class="fas fa-lock"></i></button>
     <button class="myButton" onclick="decryptThatShit();"><i class="fas fa-lock-open"></i></button>
+    <button class="myButton" onclick="document.getElementById('message').value = '';"><i class="fas fa-backspace"></i></button>
     <br>
     <p>made by <a href="https://github.com/InitializeSahib">InitializeSahib</a> utilizing the <a href="https://code.google.com/archive/p/crypto-js/">CryptoJS</a> library</p>
   </body>
