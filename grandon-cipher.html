@@ -1,0 +1,77 @@
+<html lang="en">
+  <head>
+    <title>grandon cipher 2</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet"> 
+    <script src="https://kit.fontawesome.com/df4fbc016e.js" crossorigin="anonymous"></script>
+    <style>
+      html, body {
+        height: 100%;
+      }
+      html {
+        display: table;
+        margin: auto;
+      }
+      body {
+        font-family: 'Roboto', sans-serif;
+        color: #d6d7dc;
+        background-color: #686573;
+        display: table-cell;
+        vertical-align: middle;
+      }
+      a {
+        color: #f8f9fe;
+        text-decoration: none;
+      }
+      a:hover {
+        color: #b4b5ba;
+      }
+      .myButton {
+	background-color:#d6d7dc;
+	border-radius:3px;
+	border:1px solid #686573;
+	display:inline-block;
+	cursor:pointer;
+	color:#686573;
+	font-family:'Roboto';
+	font-size:15px;
+	padding:9px 23px;
+	text-decoration:none;
+      }
+      .myButton:hover {
+	background-color:#ffffff;
+        color:#000000;
+      }
+      .myButton:active {
+	position:relative;
+	top:1px;
+      }   
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <script>
+      function encryptThatShit() {
+        let key = document.getElementById('key').value
+        let message = document.getElementById('message').value
+        let encoded = CryptoJS.AES.encrypt(message, key)
+        let sped = encoded
+        document.getElementById('message').value = sped
+      }
+      function decryptThatShit() {
+        let key = document.getElementById('key').value
+        let message = document.getElementById('message').value
+        let encoded = CryptoJS.AES.decrypt(message, key)
+        let sped = encoded.toString(CryptoJS.enc.Utf8)
+        document.getElementById('message').value = sped
+      }
+    </script>
+  </head>
+  <body>
+    <h1>grandon cipher</h1>
+    <h4>version 2</h4>
+    <input type="text" placeholder="Key" id="key" name="key"><br>
+    <input type="text" placeholder="Input / Output" id="message" name="message"><br><br>
+    <button class="myButton" onclick="encryptThatShit();"><i class="fas fa-lock"></i></button>
+    <button class="myButton" onclick="decryptThatShit();"><i class="fas fa-lock-open"></i></button>
+    <br>
+    <p>made by <a href="https://github.com/InitializeSahib">InitializeSahib</a> utilizing the <a href="https://code.google.com/archive/p/crypto-js/">CryptoJS</a> library</p>
+  </body>
+</html>
